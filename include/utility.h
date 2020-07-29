@@ -10,6 +10,8 @@
 #include <sensor_msgs/NavSatFix.h>
 #include <nav_msgs/Odometry.h>
 #include <nav_msgs/Path.h>
+#include <visualization_msgs/Marker.h>
+#include <visualization_msgs/MarkerArray.h>
 
 #include <opencv/cv.h>
 
@@ -62,10 +64,17 @@ public:
 
     std::string robot_id;
 
+    //Topics
     string pointCloudTopic;
     string imuTopic;
     string odomTopic;
     string gpsTopic;
+
+    //Frames
+    string lidarFrame;
+    string baselinkFrame;
+    string odometryFrame;
+    string mapFrame;
 
     // GPS Settings
     bool useImuHeadingInitialization;
@@ -122,7 +131,8 @@ public:
     float surroundingKeyframeSearchRadius;
     
     // Loop closure
-    bool loopClosureEnableFlag;
+    bool  loopClosureEnableFlag;
+    float loopClosureInterval;
     int   surroundingKeyframeSize;
     float historyKeyframeSearchRadius;
     float historyKeyframeSearchTimeDiff;
@@ -142,6 +152,11 @@ public:
         nh.param<std::string>("lio_sam/imuTopic", imuTopic, "imu_correct");
         nh.param<std::string>("lio_sam/odomTopic", odomTopic, "odometry/imu");
         nh.param<std::string>("lio_sam/gpsTopic", gpsTopic, "odometry/gps");
+
+        nh.param<std::string>("lio_sam/lidarFrame", lidarFrame, "base_link");
+        nh.param<std::string>("lio_sam/baselinkFrame", baselinkFrame, "base_link");
+        nh.param<std::string>("lio_sam/odometryFrame", odometryFrame, "odom");
+        nh.param<std::string>("lio_sam/mapFrame", mapFrame, "map");
 
         nh.param<bool>("lio_sam/useImuHeadingInitialization", useImuHeadingInitialization, false);
         nh.param<bool>("lio_sam/useGpsElevation", useGpsElevation, false);
@@ -190,6 +205,7 @@ public:
         nh.param<float>("lio_sam/surroundingKeyframeSearchRadius", surroundingKeyframeSearchRadius, 50.0);
 
         nh.param<bool>("lio_sam/loopClosureEnableFlag", loopClosureEnableFlag, false);
+        nh.param<float>("lio_sam/loopClosureInterval", loopClosureInterval, 5.0);
         nh.param<int>("lio_sam/surroundingKeyframeSize", surroundingKeyframeSize, 50);
         nh.param<float>("lio_sam/historyKeyframeSearchRadius", historyKeyframeSearchRadius, 10.0);
         nh.param<float>("lio_sam/historyKeyframeSearchTimeDiff", historyKeyframeSearchTimeDiff, 30.0);
