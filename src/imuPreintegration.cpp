@@ -111,7 +111,7 @@ public:
         Eigen::Affine3f imuOdomAffineLast = lidarOdomAffine * imuOdomAffineIncre;
         float x, y, z, roll, pitch, yaw;
         pcl::getTranslationAndEulerAngles(imuOdomAffineLast, x, y, z, roll, pitch, yaw);
-        
+
         // publish latest odometry
         nav_msgs::Odometry laserOdometry = imuOdomQueue.back();
         laserOdometry.pose.pose.position.x = x;
@@ -221,7 +221,7 @@ public:
         correctionNoise = gtsam::noiseModel::Diagonal::Sigmas((gtsam::Vector(6) << 0.05, 0.05, 0.05, 0.1, 0.1, 0.1).finished()); // rad,rad,rad,m, m, m
         correctionNoise2 = gtsam::noiseModel::Diagonal::Sigmas((gtsam::Vector(6) << 1, 1, 1, 1, 1, 1).finished()); // rad,rad,rad,m, m, m
         noiseModelBetweenBias = (gtsam::Vector(6) << imuAccBiasN, imuAccBiasN, imuAccBiasN, imuGyrBiasN, imuGyrBiasN, imuGyrBiasN).finished();
-        
+
         imuIntegratorImu_ = new gtsam::PreintegratedImuMeasurements(p, prior_imu_bias); // setting up the IMU integration for IMU message thread
         imuIntegratorOpt_ = new gtsam::PreintegratedImuMeasurements(p, prior_imu_bias); // setting up the IMU integration for optimization        
     }
@@ -307,7 +307,7 @@ public:
 
             imuIntegratorImu_->resetIntegrationAndSetBias(prevBias_);
             imuIntegratorOpt_->resetIntegrationAndSetBias(prevBias_);
-            
+
             key = 1;
             systemInitialized = true;
             return;
@@ -357,7 +357,7 @@ public:
                 imuIntegratorOpt_->integrateMeasurement(
                         gtsam::Vector3(thisImu->linear_acceleration.x, thisImu->linear_acceleration.y, thisImu->linear_acceleration.z),
                         gtsam::Vector3(thisImu->angular_velocity.x,    thisImu->angular_velocity.y,    thisImu->angular_velocity.z), dt);
-                
+
                 lastImuT_opt = imuTime;
                 imuQueOpt.pop_front();
             }
@@ -493,7 +493,7 @@ public:
         odometry.pose.pose.orientation.y = lidarPose.rotation().toQuaternion().y();
         odometry.pose.pose.orientation.z = lidarPose.rotation().toQuaternion().z();
         odometry.pose.pose.orientation.w = lidarPose.rotation().toQuaternion().w();
-        
+
         odometry.twist.twist.linear.x = currentState.velocity().x();
         odometry.twist.twist.linear.y = currentState.velocity().y();
         odometry.twist.twist.linear.z = currentState.velocity().z();
@@ -508,15 +508,15 @@ public:
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "roboat_loam");
-    
+
     IMUPreintegration ImuP;
 
     TransformFusion TF;
 
     ROS_INFO("\033[1;32m----> IMU Preintegration Started.\033[0m");
-    
+
     ros::MultiThreadedSpinner spinner(4);
     spinner.spin();
-    
+
     return 0;
 }
